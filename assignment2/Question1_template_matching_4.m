@@ -3,8 +3,8 @@
 
 
 % Read Main image and template image. %
-im = imread('vegan-modified.jpg');
-im_template = imread('soy-dessert.jpg');
+im = double(imread('vegan-modified.jpg'));
+im_template = double(imread('soy-dessert.jpg'));
 
 % Resize both image to half to redure computation. %
 im = imresize(im, 0.5);
@@ -56,22 +56,35 @@ im_std_integral = integralImage(im.^2);
 window_sum(1:size(im,1),1:size(im,2)) = 0;
 
 % Iterate over the screen image and compute difference for each window. %
-for i=starting_x : starting_x+10
-    for j=starting_y : starting_y+10
+for i=starting_x : ending_x
+    for j=starting_y : ending_y
         
         % Make a window from screen image. %
         starting_x_index = i - window_size_x_half;
-        ending_x_index = starting_x_index + window_size_x - 1;
+        ending_x_index =  i + window_size_x_half;
         starting_y_index = j - window_size_y_half;
-        ending_y_index = starting_y_index + window_size_y - 1;
+        ending_y_index = j + window_size_y_half;
+        
         temp_window = double(im(starting_x_index : ending_x_index, starting_y_index : ending_y_index));
         
         % Compute mean, window of operation and standard deviation of
         % window taken. %
-        ff_mean = (im_integral(ending_x_index+1,ending_y_index+1) - im_integral(starting_x_index+1,ending_y_index+1) - im_integral(ending_x_index+1,starting_y_index+1) + im_integral(starting_x_index+1, starting_y_index+1))/PIXELSINWINDOW;
-        f_mean = mean(temp_window(:));
+        f_mean = (im_integral(ending_x_index + 1,ending_y_index + 1)...
+            - im_integral(starting_x_index + 1,ending_y_index + 1)...
+            - im_integral(ending_x_index + 1,starting_y_index + 1)...
+            + im_integral(starting_x_index + 1, starting_y_index + 1))/PIXELSINWINDOW;
+        
+        square_mean = (f_mean^2);
+        sum_x_square = im_std_integral(ending_x_index + 1, ending_y_index + 1)...
+            -im_std_integral(starting_x_index + 1, ending_y_index + 1)...
+            -im_std_integral(ending_x_index+1,starting_y_index+1)...
+            +im_std_integral(starting_x_index+1,starting_y_index+1);
+
+        sum_x_square = sum_x_square/PIXELSINWINDOW;
+        
+        f_std = sqrt(abs(square_mean - sum_x_square));
+        
         f_window = temp_window - f_mean;
-        f_std = std(temp_window(:));
         
         % compute ncc. %
         ncc = (f_window.*t_window)/(f_std*t_std);
@@ -88,6 +101,6 @@ rec_y = (coordinates - (floor(coordinates/size(im,1))*size(im,1))) - window_size
 rec_x = (floor(coordinates/size(im,1)) + 1) - window_size_x_half;
 
 % Output the whole image and draw rectangle. %
-figure, imshow(im)
+figure, imshow(uint8(im))
 hold on
 rectangle('Position', [rec_x , rec_y, rec_width, rec_height], 'LineWidth', 2);

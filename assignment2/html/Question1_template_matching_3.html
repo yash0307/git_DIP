@@ -1,0 +1,228 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Question1_template_matching_3</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-09-02"><meta name="DC.source" content="Question1_template_matching_3.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Yash Patel, 201301134 %</span>
+<span class="comment">% CSE, IIIT-H %</span>
+
+
+<span class="comment">% Read Main image and template image. %</span>
+im = imread(<span class="string">'vegan-modified.jpg'</span>);
+im_template = imread(<span class="string">'soy-dessert.jpg'</span>);
+
+<span class="comment">% Resize both image to half to redure computation. %</span>
+im = imresize(im, 0.5);
+im_template = imresize(im_template, 0.5);
+
+<span class="comment">% Convert im_template to double for comparision. %</span>
+im_template = double(im_template);
+
+<span class="comment">% Compute window size of moving image. %</span>
+window_size_x = size(im_template, 1);
+window_size_y = size(im_template, 2);
+window_size_x_half = floor(window_size_x/2);
+window_size_y_half = floor(window_size_y/2);
+
+<span class="comment">% Compute Screen size of whole image. %</span>
+screen_size_x = size(im,1);
+screen_size_y = size(im,2);
+
+<span class="comment">% Get starting and ending indexes as per window and screen. %</span>
+starting_x = 1 + window_size_x_half;
+starting_y = 1 + window_size_y_half;
+ending_x = screen_size_x - window_size_x_half;
+ending_y = screen_size_y - window_size_y_half;
+
+<span class="comment">% Declare rectangle coordinates. %</span>
+rec_x= 0;
+rec_y = 0;
+rec_width = window_size_x;
+rec_height = window_size_y;
+
+<span class="comment">% flag to terminate. %</span>
+flag = 0;
+
+<span class="comment">% Declare number of pixels in window. %</span>
+PIXELSINWINDOW = window_size_x*window_size_y;
+
+<span class="comment">% Compute standard deviation and mean of template image as it remains constant. %</span>
+t_mean = mean(im_template(:));
+t_window = im_template - t_mean;
+t_std = std(im_template(:));
+
+<span class="comment">% Initialize matrix to hold hold window differences. %</span>
+window_sum(1:size(im,1),1:size(im,2)) = 0;
+
+<span class="comment">% Iterate over the screen image and compute difference for each window. %</span>
+<span class="keyword">for</span> i=starting_x : ending_x
+    <span class="keyword">for</span> j=starting_y : ending_y
+
+        <span class="comment">% Make a window from screen image. %</span>
+        temp_window = double(im(i-window_size_x_half : i+window_size_x_half, j-window_size_y_half : j+window_size_y_half));
+
+        <span class="comment">% Compute mean, window of operation and standard deviation of window taken. %</span>
+        f_mean = mean(temp_window(:));
+        f_window = temp_window - f_mean;
+        f_std = std(temp_window(:));
+
+        <span class="comment">% compute ncc. %</span>
+        ncc = (f_window.*t_window)/(f_std*t_std);
+        ncc = ncc/PIXELSINWINDOW;
+        window_sum(i,j) = sum(sum(ncc));
+
+    <span class="keyword">end</span>
+    <span class="keyword">if</span>(flag==1)
+        <span class="keyword">break</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">% coordinates with minimum difference will be the rec thing. %</span>
+coordinates = find(window_sum == max(max(window_sum)));
+rec_y = (coordinates - (floor(coordinates/size(im,1))*size(im,1))) - window_size_y_half;
+rec_x = (floor(coordinates/size(im,1)) + 1) - window_size_x_half;
+
+<span class="comment">% Output the whole image and draw rectangle. %</span>
+figure, imshow(im)
+hold <span class="string">on</span>
+rectangle(<span class="string">'Position'</span>, [rec_x , rec_y, rec_width, rec_height], <span class="string">'LineWidth'</span>, 2);
+</pre><img vspace="5" hspace="5" src="Question1_template_matching_3_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.14<br></p></div><!--
+##### SOURCE BEGIN #####
+% Yash Patel, 201301134 %
+% CSE, IIIT-H %
+
+
+% Read Main image and template image. %
+im = imread('vegan-modified.jpg');
+im_template = imread('soy-dessert.jpg');
+
+% Resize both image to half to redure computation. %
+im = imresize(im, 0.5);
+im_template = imresize(im_template, 0.5);
+
+% Convert im_template to double for comparision. %
+im_template = double(im_template);
+
+% Compute window size of moving image. %
+window_size_x = size(im_template, 1);
+window_size_y = size(im_template, 2);
+window_size_x_half = floor(window_size_x/2);
+window_size_y_half = floor(window_size_y/2);
+
+% Compute Screen size of whole image. %
+screen_size_x = size(im,1);
+screen_size_y = size(im,2);
+
+% Get starting and ending indexes as per window and screen. %
+starting_x = 1 + window_size_x_half;
+starting_y = 1 + window_size_y_half;
+ending_x = screen_size_x - window_size_x_half;
+ending_y = screen_size_y - window_size_y_half;
+
+% Declare rectangle coordinates. % 
+rec_x= 0;
+rec_y = 0;
+rec_width = window_size_x;
+rec_height = window_size_y;
+
+% flag to terminate. %
+flag = 0;
+
+% Declare number of pixels in window. %
+PIXELSINWINDOW = window_size_x*window_size_y;
+
+% Compute standard deviation and mean of template image as it remains constant. %
+t_mean = mean(im_template(:));
+t_window = im_template - t_mean;
+t_std = std(im_template(:));
+
+% Initialize matrix to hold hold window differences. %
+window_sum(1:size(im,1),1:size(im,2)) = 0;
+
+% Iterate over the screen image and compute difference for each window. %
+for i=starting_x : ending_x
+    for j=starting_y : ending_y
+        
+        % Make a window from screen image. %
+        temp_window = double(im(i-window_size_x_half : i+window_size_x_half, j-window_size_y_half : j+window_size_y_half));
+        
+        % Compute mean, window of operation and standard deviation of window taken. %
+        f_mean = mean(temp_window(:));
+        f_window = temp_window - f_mean;
+        f_std = std(temp_window(:));
+        
+        % compute ncc. %
+        ncc = (f_window.*t_window)/(f_std*t_std);
+        ncc = ncc/PIXELSINWINDOW;
+        window_sum(i,j) = sum(sum(ncc));
+        
+    end
+    if(flag==1)
+        break
+    end
+end
+
+% coordinates with minimum difference will be the rec thing. %
+coordinates = find(window_sum == max(max(window_sum)));
+rec_y = (coordinates - (floor(coordinates/size(im,1))*size(im,1))) - window_size_y_half;
+rec_x = (floor(coordinates/size(im,1)) + 1) - window_size_x_half;
+
+% Output the whole image and draw rectangle. %
+figure, imshow(im)
+hold on
+rectangle('Position', [rec_x , rec_y, rec_width, rec_height], 'LineWidth', 2);
+##### SOURCE END #####
+--></body></html>

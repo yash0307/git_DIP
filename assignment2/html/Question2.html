@@ -1,0 +1,267 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Question2</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-09-02"><meta name="DC.source" content="Question2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Yash Patel, 201301134 %</span>
+<span class="comment">% CSE, IIIT-H %</span>
+
+<span class="comment">% Read the actaul image. %</span>
+im = double(imread(<span class="string">'son3.gif'</span>));
+
+<span class="comment">% Read the three rotated images. %</span>
+im_1 = double(imread(<span class="string">'son3rot1.gif'</span>));
+im_2 = double(imread(<span class="string">'son3rot2.gif'</span>));
+im_3 = double(imread(<span class="string">'son3rot3.gif'</span>));
+
+<span class="comment">% Take DFTs of these images. %</span>
+dft_o = fft2(im);
+dft_o = fftshift(dft_o);
+
+dft_1 = fft2(im_1);
+dft_1 = fftshift(dft_1);
+
+dft_2 = fft2(im_2);
+dft_2 = fftshift(dft_2);
+
+dft_3 = fft2(im_3);
+dft_3 = fftshift(dft_3);
+
+<span class="comment">%figure, imshow(mat2gray(abs(log(1 + dft_o)))), title('Original Image')</span>
+<span class="comment">%figure, imshow(mat2gray(abs(log(1 + dft_1)))), title('Image 1')</span>
+<span class="comment">%figure, imshow(mat2gray(abs(log(1 + dft_2)))), title('Image 2')</span>
+<span class="comment">%figure, imshow(mat2gray(abs(log(1 + dft_3)))), title('Image 3')</span>
+
+ln_o = mat2gray(abs(log(1 + dft_o)));
+ln_1 = mat2gray(abs(log(1 + dft_1)));
+ln_2 = mat2gray(abs(log(1 + dft_2)));
+ln_3 = mat2gray(abs(log(1 + dft_3)));
+
+bw_o = im2bw(ln_o, 0.80);
+bw_1 = im2bw(ln_1, 0.80);
+bw_2 = im2bw(ln_2, 0.80);
+bw_3 = im2bw(ln_3, 0.80);
+
+[r1 c1] = find(bw_1 == max(max(bw_1)));
+[r2 c2] = find(bw_2 == max(max(bw_2)));
+[r3 c3] = find(bw_3 == max(max(bw_3)));
+
+size_1 = size(r1);
+size_2 = size(r2);
+size_3 = size(r3);
+
+mean_1 = 0;
+mean_2 = 0;
+mean_3 = 0;
+
+count_1 = 0;
+count_2 = 0;
+count_3 = 0;
+
+figure, imshow(im)
+
+<span class="keyword">for</span> i=1:size_1
+    <span class="keyword">for</span> j=1:size_1
+        <span class="keyword">if</span> i ~= j &amp;&amp; r1(i) ~= r1(j)
+            count_1 = count_1 + 1;
+            mean_1 = mean_1 + abs((c1(i) - c1(j))/(r1(i) - r1(j)));
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+figure, imshow(im_1)
+mean_1 = mean_1/(count_1);
+theta_1 = radtodeg(atan(mean_1))
+
+<span class="keyword">for</span> i=1:size_2
+    <span class="keyword">for</span> j=1:size_2
+        <span class="keyword">if</span> i~= j &amp;&amp; r2(i) ~= r2(j)
+            count_2 = count_2 + 1;
+            mean_2 = mean_2 + abs((c2(i) - c2(j))/(r2(i) - r2(j)));
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+figure, imshow(im_2)
+mean_2 = mean_2/(count_2);
+theta_2 = radtodeg(atan(mean_2))
+
+<span class="keyword">for</span> i=1:size_3
+    <span class="keyword">for</span> j=1:size_3
+        <span class="keyword">if</span> i~=j &amp;&amp; r3(i) ~= r3(j)
+            count_3 = count_3 + 1;
+            mean_3 = mean_3 + abs((c3(i) - c3(j))/(r3(i) - r3(j)));
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+figure, imshow(im_3)
+mean_3 = mean_3/(count_3);
+theta_3 = radtodeg(atan(mean_3))
+</pre><pre class="codeoutput">
+theta_1 =
+
+   45.6084
+
+
+theta_2 =
+
+   87.5086
+
+
+theta_3 =
+
+   45.4211
+
+</pre><img vspace="5" hspace="5" src="Question2_01.png" alt=""> <img vspace="5" hspace="5" src="Question2_02.png" alt=""> <img vspace="5" hspace="5" src="Question2_03.png" alt=""> <img vspace="5" hspace="5" src="Question2_04.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.14<br></p></div><!--
+##### SOURCE BEGIN #####
+% Yash Patel, 201301134 %
+% CSE, IIIT-H %
+
+% Read the actaul image. %
+im = double(imread('son3.gif'));
+
+% Read the three rotated images. %
+im_1 = double(imread('son3rot1.gif'));
+im_2 = double(imread('son3rot2.gif'));
+im_3 = double(imread('son3rot3.gif'));
+
+% Take DFTs of these images. %
+dft_o = fft2(im);
+dft_o = fftshift(dft_o);
+
+dft_1 = fft2(im_1);
+dft_1 = fftshift(dft_1);
+
+dft_2 = fft2(im_2);
+dft_2 = fftshift(dft_2);
+
+dft_3 = fft2(im_3);
+dft_3 = fftshift(dft_3);
+
+%figure, imshow(mat2gray(abs(log(1 + dft_o)))), title('Original Image')
+%figure, imshow(mat2gray(abs(log(1 + dft_1)))), title('Image 1')
+%figure, imshow(mat2gray(abs(log(1 + dft_2)))), title('Image 2')
+%figure, imshow(mat2gray(abs(log(1 + dft_3)))), title('Image 3')
+
+ln_o = mat2gray(abs(log(1 + dft_o)));
+ln_1 = mat2gray(abs(log(1 + dft_1)));
+ln_2 = mat2gray(abs(log(1 + dft_2)));
+ln_3 = mat2gray(abs(log(1 + dft_3)));
+
+bw_o = im2bw(ln_o, 0.80);
+bw_1 = im2bw(ln_1, 0.80);
+bw_2 = im2bw(ln_2, 0.80);
+bw_3 = im2bw(ln_3, 0.80);
+
+[r1 c1] = find(bw_1 == max(max(bw_1)));
+[r2 c2] = find(bw_2 == max(max(bw_2)));
+[r3 c3] = find(bw_3 == max(max(bw_3)));
+
+size_1 = size(r1);
+size_2 = size(r2);
+size_3 = size(r3);
+
+mean_1 = 0;
+mean_2 = 0;
+mean_3 = 0;
+
+count_1 = 0;
+count_2 = 0;
+count_3 = 0;
+
+figure, imshow(im)
+
+for i=1:size_1
+    for j=1:size_1
+        if i ~= j && r1(i) ~= r1(j)
+            count_1 = count_1 + 1;
+            mean_1 = mean_1 + abs((c1(i) - c1(j))/(r1(i) - r1(j)));
+        end
+    end
+end
+
+figure, imshow(im_1)
+mean_1 = mean_1/(count_1);
+theta_1 = radtodeg(atan(mean_1))
+
+for i=1:size_2
+    for j=1:size_2
+        if i~= j && r2(i) ~= r2(j)
+            count_2 = count_2 + 1;
+            mean_2 = mean_2 + abs((c2(i) - c2(j))/(r2(i) - r2(j)));
+        end
+    end
+end
+
+figure, imshow(im_2)
+mean_2 = mean_2/(count_2);
+theta_2 = radtodeg(atan(mean_2))
+
+for i=1:size_3
+    for j=1:size_3
+        if i~=j && r3(i) ~= r3(j)
+            count_3 = count_3 + 1;
+            mean_3 = mean_3 + abs((c3(i) - c3(j))/(r3(i) - r3(j)));
+        end
+    end
+end
+
+figure, imshow(im_3)
+mean_3 = mean_3/(count_3);
+theta_3 = radtodeg(atan(mean_3))
+##### SOURCE END #####
+--></body></html>
