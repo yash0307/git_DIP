@@ -1,7 +1,7 @@
 % Yash Patel, 201301134 %
 % CSE, IIIT-H %
 
-
+tic
 % Read Main image and template image. %
 im = double(imread('vegan-modified.jpg'));
 im_template = double(imread('soy-dessert.jpg'));
@@ -104,3 +104,4 @@ rec_x = (floor(coordinates/size(im,1)) + 1) - window_size_x_half;
 figure, imshow(uint8(im))
 hold on
 rectangle('Position', [rec_x , rec_y, rec_width, rec_height], 'LineWidth', 2);
+toc
