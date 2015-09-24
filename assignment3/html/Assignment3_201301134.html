@@ -1,0 +1,548 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Yash Patel, 201301134 %%</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-09-24"><meta name="DC.source" content="Assignment3_201301134.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+
+  </style></head><body><div class="content"><h1>Yash Patel, 201301134 %%</h1><!--introduction--><p>CSE, IIIT-H %</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Question-1</a></li><li><a href="#2">Question-2</a></li><li><a href="#3">Question-3</a></li><li><a href="#4">Question-4a</a></li><li><a href="#5">Question-4b</a></li></ul></div><h2>Question-1<a name="1"></a></h2><pre class="codeinput">clc
+clear <span class="string">all</span>
+<span class="comment">% Read the image. %</span>
+[img map] = imread(<span class="string">'octone.gif'</span>);
+
+<span class="comment">% Convert this to jpg image. %</span>
+<span class="keyword">if</span> ~isempty(map), img = ind2rgb(img, map); <span class="keyword">end</span>
+
+<span class="comment">% Convert image from rgb to hsv %</span>
+im = rgb2hsv(img);
+
+<span class="comment">% Take hue, saturation and value %</span>
+im_hue = round(im(:,:,1)*360);
+im_saturation = im(:,:,2);
+im_value = im(:,:,3);
+
+<span class="comment">% Set min and max hue values for Yellow.%</span>
+yellow_min = 57;
+yellow_max = 90;
+
+<span class="comment">% Get binary image corresponting to yellow range. %</span>
+yellow = ((im_hue&gt;yellow_min)&amp;(im_hue&lt;=yellow_max));
+
+<span class="comment">% Make corresponding RGB image. %</span>
+RGB = zeros(size(im,1), size(im,2), 3);
+RGB(:, :, 1) = yellow;
+RGB(:, :, 2) = yellow;
+RGB(:, :, 3) = 0.3*yellow;
+figure, imshow(RGB)
+</pre><img vspace="5" hspace="5" src="Assignment3_201301134_01.png" alt=""> <h2>Question-2<a name="2"></a></h2><pre class="codeinput">clc
+clear <span class="string">all</span>
+<span class="comment">% Read circle image. %</span>
+im = imread(<span class="string">'circles.jpg'</span>);
+
+<span class="comment">% Convert image to gray scale image. %</span>
+im = rgb2gray(im);
+im = im2bw(im,0.4);
+im_bw_pre = zeros(size(im));
+nums = zeros(15,2);
+<span class="comment">% Vary over suitable radius size and apply top-hat filter. %</span>
+<span class="keyword">for</span> i=3:12
+
+    <span class="comment">% Take the structuring element as circle. %</span>
+    se = strel(<span class="string">'disk'</span>,i);
+
+    <span class="comment">% Apply Top-Hat Filter. %</span>
+    im_th = imtophat(im,se);
+
+    <span class="comment">% Convert to binary image. %</span>
+    im_bw = im_th - im_bw_pre;
+
+    <span class="comment">% Remove salt pepper noise for this. %</span>
+    im_bw = medfilt2(im_bw, [5,5]);
+
+    <span class="comment">% Show this image. %</span>
+    figure, imshow(im_bw)
+
+    <span class="comment">% Save im pre as this im bw for next iteration. %</span>
+    im_bw_pre = im_th;
+
+    <span class="comment">% Count the connected components. %</span>
+    [l num] = bwlabel(im_bw);
+
+    <span class="comment">% Store in array. %</span>
+    nums(i-2,1) = i;
+    nums(i-2,2) = num;
+
+<span class="keyword">end</span>
+
+<span class="comment">% Print nums. %</span>
+nums
+</pre><pre class="codeoutput">
+nums =
+
+     3    43
+     4    27
+     5    63
+     6    41
+     7    35
+     8    20
+     9    39
+    10    34
+    11     1
+    12     0
+     0     0
+     0     0
+     0     0
+     0     0
+     0     0
+
+</pre><img vspace="5" hspace="5" src="Assignment3_201301134_02.png" alt=""> <img vspace="5" hspace="5" src="Assignment3_201301134_03.png" alt=""> <img vspace="5" hspace="5" src="Assignment3_201301134_04.png" alt=""> <img vspace="5" hspace="5" src="Assignment3_201301134_05.png" alt=""> <img vspace="5" hspace="5" src="Assignment3_201301134_06.png" alt=""> <img vspace="5" hspace="5" src="Assignment3_201301134_07.png" alt=""> <img vspace="5" hspace="5" src="Assignment3_201301134_08.png" alt=""> <img vspace="5" hspace="5" src="Assignment3_201301134_09.png" alt=""> <img vspace="5" hspace="5" src="Assignment3_201301134_10.png" alt=""> <img vspace="5" hspace="5" src="Assignment3_201301134_11.png" alt=""> <h2>Question-3<a name="3"></a></h2><pre class="codeinput">clc
+clear <span class="string">all</span>
+<span class="comment">% Read the foreground image. %</span>
+im_f = imread(<span class="string">'question3_fg.jpg'</span>);
+figure, imshow(im_f)
+
+<span class="comment">% Read the background image. %</span>
+im_b = imread(<span class="string">'question3_bg.jpg'</span>);
+figure, imshow(im_b)
+
+<span class="comment">% Set values according to background in foreground image. %</span>
+im_f_ext_indexes = (((im_f(:,:,1)&gt;15) &amp; (im_f(:,:,2)&lt;240)) | ((im_f(:,:,1)&gt;200) &amp; (im_f(:,:,2)&gt;200) &amp; (im_f(:,:,3)&gt;200)));
+
+im_f_ext = cat(3,im_f_ext_indexes,im_f_ext_indexes, im_f_ext_indexes);
+
+<span class="comment">% Keep original value of only indexes specified rest all zero. %</span>
+im_f = uint8(double(im_f).*double(im_f_ext));
+
+<span class="comment">% Get size of fg image. %</span>
+im_f_size = size(im_f);
+
+<span class="comment">% Resize background image, according to fg image. %</span>
+im_b = imresize(im_b, [im_f_size(1), im_f_size(2)]);
+
+<span class="comment">% find modified bg image. %</span>
+im_f_ext = not(im_f_ext);
+im_final = uint8(double(im_b).*double(im_f_ext));
+
+<span class="comment">% add both images. %</span>
+im_final = im_final + im_f;
+figure, imshow(im_final)
+</pre><pre class="codeoutput">Warning: Image is too big to fit on screen; displaying at 67% 
+</pre><img vspace="5" hspace="5" src="Assignment3_201301134_12.png" alt=""> <img vspace="5" hspace="5" src="Assignment3_201301134_13.png" alt=""> <img vspace="5" hspace="5" src="Assignment3_201301134_14.png" alt=""> <h2>Question-4a<a name="4"></a></h2><pre class="codeinput">clc
+clear <span class="string">all</span>
+
+<span class="comment">% Read the world map. %</span>
+im = double(imread(<span class="string">'map.gif'</span>));
+
+<span class="comment">% Take image size. %</span>
+im_size = size(im);
+
+<span class="comment">% Compute the breadth and length of map. %</span>
+breadth = im_size(2)/2;
+length = im_size(1)/2;
+
+<span class="comment">% Max and Min variations of breadth possible. %</span>
+breadth_min_d = -1;
+breadth_max_d = 1;
+
+<span class="comment">% Max and Min variations of lengths. %</span>
+length_min_d = -pi/2;
+length_max_d = pi/2;
+
+<span class="comment">% Ranges as per function for breadth. %</span>
+breadth_min_r = -1;
+breadth_max_r = 1;
+
+<span class="comment">% Ranges as per function for length. %</span>
+length_min_r = -1;
+length_max_r = 1;
+
+<span class="comment">% Number of steps size of breadth. %</span>
+breadth_step_o = ( breadth_max_d - breadth_min_d ) /(breadth*2);
+
+<span class="comment">% Number of steps size of length. %</span>
+length_step_o = ( length_max_d - length_min_d ) /(length*2);
+
+<span class="comment">% Steps size of breadth in transformed image. %</span>
+breadth_step_n = ( breadth_max_r - breadth_min_r ) /(breadth*2);
+
+<span class="comment">% Steps size of length in transformed image. %</span>
+length_step_n = ( length_max_r - length_min_r ) /(length*2);
+
+
+<span class="comment">% Old x and y in image, according to domain parameters. %</span>
+[x_o y_o] = meshgrid(breadth_min_d + breadth_step_o : breadth_step_o : breadth_max_d<span class="keyword">...</span>
+                     , length_min_d + length_step_o : length_step_o : length_max_d );
+
+
+<span class="comment">% New x and y in image, according to range parameters. %</span>
+[x_n y_n] =  meshgrid(breadth_min_r + breadth_step_n : breadth_step_n : breadth_max_r<span class="keyword">...</span>
+                     , length_min_r + length_step_n : length_step_n : length_max_r );
+
+<span class="comment">% Inerse Transformation of coordinates. %</span>
+im_o_x = x_n;
+im_o_y = asin( y_n );
+
+<span class="comment">% Interpolate the values from neighbours of corresponding old image pixel %</span>
+img_final = interp2 (x_o, y_o, im, im_o_x, im_o_y );
+
+figure, imshow(im);
+title(<span class="string">'Normal World Map'</span>);
+figure, imshow(img_final);
+title(<span class="string">'Cylindrical projection of World Map'</span>);
+</pre><pre class="codeoutput">Warning: Image is too big to fit on screen; displaying at 67% 
+Warning: Image is too big to fit on screen; displaying at 67% 
+</pre><h2>Question-4b<a name="5"></a></h2><pre class="codeinput">clc
+clear <span class="string">all</span>
+<span class="comment">% Read the world map. %</span>
+im = double(imread(<span class="string">'map.gif'</span>));
+
+<span class="comment">% Take image size. %</span>
+im_size = size(im);
+
+<span class="comment">% Compute the breadth and length of map. %</span>
+breadth = im_size(2)/2;
+length = im_size(1)/2;
+
+
+del=0.1;
+
+<span class="comment">% Max and Min variations of breadth possible. %</span>
+breadth_min_d = -1;
+breadth_max_d = 1;
+
+<span class="comment">% Max and Min variations of lengths. %</span>
+length_min_d = -pi/(2+del);
+length_max_d = pi/(2+del);
+
+<span class="comment">% Ranges as per function for breadth. %</span>
+breadth_min_r = -1;
+breadth_max_r = 1;
+
+<span class="comment">% Ranges as per function for length. %</span>
+length_min_r = log(tan(-pi/2/(2+del)+pi/4));
+length_max_r = log(tan(pi/2/(2+del)+pi/4));
+
+
+<span class="comment">% Number of steps size of breadth. %</span>
+breadth_step_o = (breadth_max_d - breadth_min_d)/(breadth*2);
+
+<span class="comment">% Number of steps size of length. %</span>
+length_step_o = (length_max_d - length_min_d)/(length*2);
+
+<span class="comment">% Steps size of breadth in transformed image. %</span>
+breadth_step_n = (breadth_max_r - breadth_min_r)/(breadth*2);
+
+<span class="comment">% Steps size of length in transformed image. %</span>
+length_step_n = (length_max_r - length_min_r)/(length*2);
+
+<span class="comment">% Old x and y in image, according to domain parameters. %</span>
+[ x_o y_o ] = meshgrid( breadth_min_d + breadth_step_o : breadth_step_o : breadth_max_d<span class="keyword">...</span>
+                     , length_min_d + length_step_o : length_step_o : length_max_d );
+
+<span class="comment">% New x and y in image, according to range parameters. %</span>
+[ x_n y_n ] =  meshgrid( breadth_min_r + breadth_step_n : breadth_step_n : breadth_max_r<span class="keyword">...</span>
+                     , length_min_r + length_step_n :length_step_n : length_max_r );
+
+<span class="comment">% Inerse Transformation of coordinates. %</span>
+im_o_x = x_n;
+im_o_y = 2*(atan(exp(y_n))-pi/4);
+
+<span class="comment">% Interpolate the values from neighbours of corresponding old image pixel %</span>
+img_final_2 = interp2 (x_o, y_o, im, im_o_x, im_o_y );
+
+figure;
+imshow(img_final_2);
+title(<span class="string">'Mercartor-projection of World Map'</span>);
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.14<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Yash Patel, 201301134 %%
+% CSE, IIIT-H %
+
+%% Question-1
+clc
+clear all
+% Read the image. %
+[img map] = imread('octone.gif');
+
+% Convert this to jpg image. %
+if ~isempty(map), img = ind2rgb(img, map); end
+
+% Convert image from rgb to hsv %
+im = rgb2hsv(img);
+
+% Take hue, saturation and value %
+im_hue = round(im(:,:,1)*360);
+im_saturation = im(:,:,2);
+im_value = im(:,:,3);
+
+% Set min and max hue values for Yellow.%
+yellow_min = 57;
+yellow_max = 90;
+
+% Get binary image corresponting to yellow range. %
+yellow = ((im_hue>yellow_min)&(im_hue<=yellow_max));
+
+% Make corresponding RGB image. %
+RGB = zeros(size(im,1), size(im,2), 3);
+RGB(:, :, 1) = yellow;
+RGB(:, :, 2) = yellow;
+RGB(:, :, 3) = 0.3*yellow;
+figure, imshow(RGB)
+
+%% Question-2
+clc
+clear all
+% Read circle image. %
+im = imread('circles.jpg');
+
+% Convert image to gray scale image. %
+im = rgb2gray(im);
+im = im2bw(im,0.4);
+im_bw_pre = zeros(size(im));
+nums = zeros(15,2);
+% Vary over suitable radius size and apply top-hat filter. %
+for i=3:12
+    
+    % Take the structuring element as circle. %
+    se = strel('disk',i);
+
+    % Apply Top-Hat Filter. %
+    im_th = imtophat(im,se);
+    
+    % Convert to binary image. %
+    im_bw = im_th - im_bw_pre;
+    
+    % Remove salt pepper noise for this. %
+    im_bw = medfilt2(im_bw, [5,5]);
+    
+    % Show this image. %
+    figure, imshow(im_bw)
+    
+    % Save im pre as this im bw for next iteration. %
+    im_bw_pre = im_th;
+    
+    % Count the connected components. %
+    [l num] = bwlabel(im_bw);
+    
+    % Store in array. %
+    nums(i-2,1) = i;
+    nums(i-2,2) = num;
+ 
+end
+
+% Print nums. %
+nums
+
+%% Question-3 
+clc
+clear all
+% Read the foreground image. %
+im_f = imread('question3_fg.jpg');
+figure, imshow(im_f)
+
+% Read the background image. %
+im_b = imread('question3_bg.jpg');
+figure, imshow(im_b)
+
+% Set values according to background in foreground image. %
+im_f_ext_indexes = (((im_f(:,:,1)>15) & (im_f(:,:,2)<240)) | ((im_f(:,:,1)>200) & (im_f(:,:,2)>200) & (im_f(:,:,3)>200)));
+
+im_f_ext = cat(3,im_f_ext_indexes,im_f_ext_indexes, im_f_ext_indexes);
+
+% Keep original value of only indexes specified rest all zero. %
+im_f = uint8(double(im_f).*double(im_f_ext));
+
+% Get size of fg image. %
+im_f_size = size(im_f);
+
+% Resize background image, according to fg image. %
+im_b = imresize(im_b, [im_f_size(1), im_f_size(2)]);
+
+% find modified bg image. %
+im_f_ext = not(im_f_ext);
+im_final = uint8(double(im_b).*double(im_f_ext));
+
+% add both images. %
+im_final = im_final + im_f;
+figure, imshow(im_final)
+
+%% Question-4a
+clc
+clear all
+
+% Read the world map. %
+im = double(imread('map.gif'));
+
+% Take image size. %
+im_size = size(im);
+
+% Compute the breadth and length of map. %
+breadth = im_size(2)/2;
+length = im_size(1)/2;
+
+% Max and Min variations of breadth possible. %
+breadth_min_d = -1;
+breadth_max_d = 1;
+
+% Max and Min variations of lengths. %
+length_min_d = -pi/2;
+length_max_d = pi/2;
+
+% Ranges as per function for breadth. %
+breadth_min_r = -1;
+breadth_max_r = 1;
+
+% Ranges as per function for length. %
+length_min_r = -1;
+length_max_r = 1;
+
+% Number of steps size of breadth. %
+breadth_step_o = ( breadth_max_d - breadth_min_d ) /(breadth*2);
+
+% Number of steps size of length. %
+length_step_o = ( length_max_d - length_min_d ) /(length*2);
+
+% Steps size of breadth in transformed image. % 
+breadth_step_n = ( breadth_max_r - breadth_min_r ) /(breadth*2);
+
+% Steps size of length in transformed image. % 
+length_step_n = ( length_max_r - length_min_r ) /(length*2);
+
+
+% Old x and y in image, according to domain parameters. %
+[x_o y_o] = meshgrid(breadth_min_d + breadth_step_o : breadth_step_o : breadth_max_d...
+                     , length_min_d + length_step_o : length_step_o : length_max_d );
+
+
+% New x and y in image, according to range parameters. %
+[x_n y_n] =  meshgrid(breadth_min_r + breadth_step_n : breadth_step_n : breadth_max_r...
+                     , length_min_r + length_step_n : length_step_n : length_max_r );
+
+% Inerse Transformation of coordinates. %
+im_o_x = x_n;
+im_o_y = asin( y_n );
+
+% Interpolate the values from neighbours of corresponding old image pixel %
+img_final = interp2 (x_o, y_o, im, im_o_x, im_o_y );
+
+figure, imshow(im);
+title('Normal World Map');
+figure, imshow(img_final);
+title('Cylindrical projection of World Map');
+
+%% Question-4b
+clc
+clear all
+% Read the world map. %
+im = double(imread('map.gif'));
+
+% Take image size. %
+im_size = size(im);
+
+% Compute the breadth and length of map. %
+breadth = im_size(2)/2;
+length = im_size(1)/2;
+
+
+del=0.1;
+
+% Max and Min variations of breadth possible. %
+breadth_min_d = -1;
+breadth_max_d = 1;
+
+% Max and Min variations of lengths. %
+length_min_d = -pi/(2+del);
+length_max_d = pi/(2+del);
+
+% Ranges as per function for breadth. %
+breadth_min_r = -1;
+breadth_max_r = 1;
+
+% Ranges as per function for length. %
+length_min_r = log(tan(-pi/2/(2+del)+pi/4));
+length_max_r = log(tan(pi/2/(2+del)+pi/4));
+
+
+% Number of steps size of breadth. %
+breadth_step_o = (breadth_max_d - breadth_min_d)/(breadth*2);
+
+% Number of steps size of length. %
+length_step_o = (length_max_d - length_min_d)/(length*2);
+
+% Steps size of breadth in transformed image. %
+breadth_step_n = (breadth_max_r - breadth_min_r)/(breadth*2);
+
+% Steps size of length in transformed image. %
+length_step_n = (length_max_r - length_min_r)/(length*2);
+
+% Old x and y in image, according to domain parameters. %
+[ x_o y_o ] = meshgrid( breadth_min_d + breadth_step_o : breadth_step_o : breadth_max_d...
+                     , length_min_d + length_step_o : length_step_o : length_max_d );
+
+% New x and y in image, according to range parameters. %
+[ x_n y_n ] =  meshgrid( breadth_min_r + breadth_step_n : breadth_step_n : breadth_max_r...
+                     , length_min_r + length_step_n :length_step_n : length_max_r );
+
+% Inerse Transformation of coordinates. %
+im_o_x = x_n;
+im_o_y = 2*(atan(exp(y_n))-pi/4);
+
+% Interpolate the values from neighbours of corresponding old image pixel %
+img_final_2 = interp2 (x_o, y_o, im, im_o_x, im_o_y );
+
+figure;
+imshow(img_final_2);
+title('Mercartor-projection of World Map');
+##### SOURCE END #####
+--></body></html>
