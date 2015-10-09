@@ -21,7 +21,7 @@ for i=1:4
 end
 
 % Using a random function pick and image and classify. %
-while 1
+for j=1:10
     
     random_i = randi([1,4]);
     im = imread(strcat('./yogasan/', num2str(random_i),'.jpg'));
